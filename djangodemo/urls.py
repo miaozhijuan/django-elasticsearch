@@ -20,4 +20,6 @@ from elasticsearchservice import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('index/', views.index),
+    path('statisticForEcharts/', views.statisticForEcharts),
+    path('upload_file/', views.upload_file),
 ]

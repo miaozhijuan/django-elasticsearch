@@ -5,6 +5,8 @@ import requests
 import json
 import simplejson
 from elasticsearch import Elasticsearch
+import os
+import shutil
 
 
 # 参数传递方法封装
@@ -78,5 +80,78 @@ def CRUDParamMethod(request):
 
 # 用户新增创建一个关于用户单独的索引，维护对于用户的增删改查等操作  根据什么唯一确定一个用户。用户名和啥
 
+
+
+def statisticForEcharts(request):
+    print(request)
+    obj = Elasticsearch('localhost:9200')
+    # # 創建索引index:索引的名字,body:數據,ignore:狀態碼
+    # result = obj.indices.create(index="users", body={"username": "李仕凯", "password": "123"}, ignore=400)
+    # result = obj.indices.delete(index='users', ignore = [400, 404])
+    # data = {"username": "李仕凯", "password": "123"}
+    # data2 = {"username": "李人", "password": "123"}
+    # # result = obj.create(index="users", doc_type="doc_", id=1, body=data)
+    # # 创建用户user索引
+    # result = obj.index(index='users', doc_type='_doc', body=data)
+    # result = obj.index(index='users', doc_type='_doc', body=data2)
+    # 检索数据
+    dsl = {
+            "size" : 0,
+            "aggs" : {
+                "popular_colors" : {
+                    "terms" : {
+                      "field" : "专业分类.keyword"
+                    }
+                }
+            }
+        }
+
+    result = obj.search(index='lishikai_index000', body=dsl)
+    # print(result)
+    # 修改用户信息--例如密码  --传入id
+    # data = {
+    #     'username': '美国留给伊拉克的是个烂摊子吗',
+    #     'password': '123',
+    # }
+    # data1 = {'_index': 'users',
+    #         '_id': 'xaJSHG8B0WQk4EfReCWF',
+    #         '_source': data,        # 实现更新操作-------更新用户名或者密码
+    #         '_op_type': 'index'}
+    # result = bulk(obj, actions=[data1])
+    # # bulk()
+    # # 删除操作---完成
+    # result = obj.delete(index='users', doc_type='_doc', id='xaJSHG8B0WQk4EfReCWF')
+    # result = obj.update(index='users', doc_type='_doc', id='xaJSHG8B0WQk4EfReCWF', body=json.dumps(data))
+    returnJson = result['aggregations']['popular_colors']['buckets']
+    print(returnJson)
+    return HttpResponse(json.dumps(returnJson), content_type="application/json")
+    # return returnJson;
+
+def upload_file(request):
+    print(request.FILES)
+    if request.method == "POST":    # 请求方法为POST时，进行处理
+        myFile =request.FILES.get("file", None)    # 获取上传的文件，如果没有文件，则默认为None
+        print(myFile)
+        if not myFile:
+            print(myFile.name)
+            return HttpResponse("no files for upload!")
+        destination = open(os.path.join("C:\\Users\\22934\\PycharmProjects\\djangodemo\\upload",myFile.name),'wb+')    # C:\Users\22934\PycharmProjects\djangodemo\upload打开特定的文件夹进行二进制的写操作
+        for chunk in myFile.chunks():      # 分块写入文件
+            destination.write(chunk)
+        destination.close()
+        deleteAllTheFile()
+        return HttpResponse("upload over!")
+
+def deleteAllTheFile():
+
+    # 处理完之后删除文件/先上传再清空
+    # os.remove("C:\\Users\\22934\\PycharmProjects\\djangodemo\\upload")
+    shutil.rmtree("C:\\Users\\22934\\PycharmProjects\\djangodemo\\upload")
+    os.mkdir("C:\\Users\\22934\\PycharmProjects\\djangodemo\\upload")
+
+    return HttpResponse("upload over!")
+
+
 if __name__ == '__main__':
-    CRUDParamMethod(1)
+    # CRUDParamMethod(1)
+    statisticForEcharts(1)

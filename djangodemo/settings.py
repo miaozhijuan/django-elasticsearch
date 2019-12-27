@@ -52,8 +52,29 @@ INSTALLED_APPS = [
     'users',
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
-      'http://localhost:8080',
+      # 'http://localhost:8888',
+)
+
+CORS_ALLOW_METHODS = (
+'GET',
+'POST',
+'PUT',
+'PATCH',
+'DELETE',
+'OPTIONS'
+)
+
+CORS_ALLOW_HEADERS = (
+'x-requested-with',
+'content-type',
+'accept',
+'origin',
+'authorization',
+'x-csrftoken',
+'access-control-allow-origin',
+'access-control-allow-headers'
 )
 
 ROOT_URLCONF = 'djangodemo.urls'
