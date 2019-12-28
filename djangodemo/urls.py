@@ -22,4 +22,6 @@ urlpatterns = [
     path('index/', views.index),
     path('statisticForEcharts/', views.statisticForEcharts),
     path('upload_file/', views.upload_file),
+    path('sent_json_to_elasticsearch/', views.sent_json_to_elasticsearch),
+    path('processHandleInput/', views.processHandleInput),
 ]

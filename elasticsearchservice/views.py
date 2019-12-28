@@ -7,6 +7,7 @@ import simplejson
 from elasticsearch import Elasticsearch
 import os
 import shutil
+from elasticsearchservice import traverse
 
 
 # 参数传递方法封装
@@ -135,23 +136,71 @@ def upload_file(request):
         if not myFile:
             print(myFile.name)
             return HttpResponse("no files for upload!")
+        #  todo 需要修改地址或者改成全局变量容易修改
         destination = open(os.path.join("C:\\Users\\22934\\PycharmProjects\\djangodemo\\upload",myFile.name),'wb+')    # C:\Users\22934\PycharmProjects\djangodemo\upload打开特定的文件夹进行二进制的写操作
         for chunk in myFile.chunks():      # 分块写入文件
             destination.write(chunk)
+        # 处理写入的文件，生成待插入数据库文件 todo try-catch的写法问题，捕获全局异常解决失败
+        print(destination)
+        traverse.traverse_dir('C:/Users/22934/PycharmProjects/djangodemo/upload')
+
+
+        # elasticsearch 调用logstash，或者按行读取发送数据到elasticsearch、哪个简单
+
+        # 清空文件内容加载最后删除文件中
+
+
+        # 关闭文件
         destination.close()
         deleteAllTheFile()
         return HttpResponse("upload over!")
-
+def sent_json_to_elasticsearch(request):
+    obj = Elasticsearch('localhost:9200')
+    # # 創建索引index:索引的名字,body:數據,ignore:狀態碼
+    # result = obj.indices.create(index="users", body={"username": "李仕凯", "password": "123"}, ignore=400)
+    # 判断是否存在文件
+    file = open("C:\\Users\\22934\\PycharmProjects\\djangodemo\\processtologstash\\data-end.txt")
+    print('进入发送json数据给elasticsearch')
+    while 1:
+        line = file.readline()
+        if not line:
+            break
+        result = obj.index(index='testadd', doc_type='_doc', body=line,ignore=400)
+        print(result)
+    # while 1:
+    #     lines = file.readlines(10)
+    #     if not lines:
+    #         break
+    #     for line in lines:
+    #         result = obj.index(index='testadd', doc_type='_doc', body=line)
+    #         print(result)
+    print('读取结束')
+    # 清空文件内容
+    file.close()
+    shutil.rmtree("C:\\Users\\22934\\PycharmProjects\\djangodemo\\processtologstash")
+    os.mkdir("C:\\Users\\22934\\PycharmProjects\\djangodemo\\processtologstash")
+    return HttpResponse("upload over!")
+def processHandleInput(request):
+    obj = Elasticsearch('localhost:9200')
+    # todo 处理请求过来的json数据
+    # print(request.content_params)
+    # print(request.body)
+    json_result = json.loads(request.body)
+    result = obj.index(index='testadd', doc_type='_doc', body=json_result, ignore=400)
+    print(result._id)
+    return HttpResponse('handle over!')
 def deleteAllTheFile():
 
     # 处理完之后删除文件/先上传再清空
     # os.remove("C:\\Users\\22934\\PycharmProjects\\djangodemo\\upload")
     shutil.rmtree("C:\\Users\\22934\\PycharmProjects\\djangodemo\\upload")
     os.mkdir("C:\\Users\\22934\\PycharmProjects\\djangodemo\\upload")
-
+    # todo 删除文件夹再新建文件夹的形式
+    # shutil.rmtree("C:\\Users\\22934\\PycharmProjects\\djangodemo\\processtologstash")
+    # os.mkdir("C:\\Users\\22934\\PycharmProjects\\djangodemo\\processtologstash")
     return HttpResponse("upload over!")
 
 
 if __name__ == '__main__':
     # CRUDParamMethod(1)
-    statisticForEcharts(1)
+    sent_json_to_elasticsearch()
