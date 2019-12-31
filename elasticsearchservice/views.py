@@ -165,7 +165,7 @@ def sent_json_to_elasticsearch(request):
         line = file.readline()
         if not line:
             break
-        result = obj.index(index='testadd', doc_type='_doc', body=line,ignore=400)
+        result = obj.index(index='lishikai_index000', doc_type='_doc', body=line,ignore=400)
         print(result)
     # while 1:
     #     lines = file.readlines(10)
@@ -186,7 +186,7 @@ def processHandleInput(request):
     # print(request.content_params)
     # print(request.body)
     json_result = json.loads(request.body)
-    result = obj.index(index='testadd', doc_type='_doc', body=json_result, ignore=400)
+    result = obj.index(index='lishikai_index000', doc_type='_doc', body=json_result, ignore=400)
     print(result._id)
     return HttpResponse('handle over!')
 def deleteAllTheFile():
