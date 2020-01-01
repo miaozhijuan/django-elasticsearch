@@ -186,8 +186,9 @@ def processHandleInput(request):
     # print(request.content_params)
     # print(request.body)
     json_result = json.loads(request.body)
+    print(json_result)
     result = obj.index(index='lishikai_index000', doc_type='_doc', body=json_result, ignore=400)
-    print(result._id)
+    print(result)
     return HttpResponse('handle over!')
 def deleteAllTheFile():
 
