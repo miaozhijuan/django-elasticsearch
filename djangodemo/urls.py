@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from elasticsearchservice import views
+from kgextacttrip import kgviews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +25,5 @@ urlpatterns = [
     path('upload_file/', views.upload_file),
     path('sent_json_to_elasticsearch/', views.sent_json_to_elasticsearch),
     path('processHandleInput/', views.processHandleInput),
+    path('kgprocess/', kgviews.kgprocess),
 ]

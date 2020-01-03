@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
+    'kgextacttrip',
+    'elasticsearchservice',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
