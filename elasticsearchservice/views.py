@@ -8,6 +8,7 @@ from elasticsearch import Elasticsearch
 import os
 import shutil
 from elasticsearchservice import traverse
+from djangodemo import settings
 
 
 # 参数传递方法封装
@@ -28,7 +29,9 @@ def index(request):
 }
 #为什么使用post请求的方式才能成功？因为post请求可以传输json值
     headers ={'content-type': 'application/json'}
-    ret = requests.post("http://127.0.0.1:9200/lishikai_index007/_search",data=json.dumps(payload),headers=headers)
+    url = settings.REQUEST_ES_RUL
+    # ret = requests.post("http://127.0.0.1:9200/lishikai_index007/_search",data=json.dumps(payload),headers=headers)
+    ret = requests.post(url,data=json.dumps(payload),headers=headers)
     print('----------------')
     print(ret.text)
     print('----------------')
@@ -40,7 +43,8 @@ def index(request):
 # 修改----只提供对于规章制度、 python包操作elasticsearch
 def CRUDParamMethod(request):
     print(request)
-    obj = Elasticsearch('localhost:9200')
+    ipPort = settings.REQUEST_ES_IP_PORT
+    obj = Elasticsearch(ipPort)
     # # 創建索引index:索引的名字,body:數據,ignore:狀態碼
     # result = obj.indices.create(index="users", body={"username": "李仕凯", "password": "123"}, ignore=400)
     # result = obj.indices.delete(index='users', ignore = [400, 404])
@@ -85,7 +89,7 @@ def CRUDParamMethod(request):
 
 def statisticForEcharts(request):
     print(request)
-    obj = Elasticsearch('localhost:9200')
+    obj = Elasticsearch(settings.REQUEST_ES_IP_PORT)
     # # 創建索引index:索引的名字,body:數據,ignore:狀態碼
     # result = obj.indices.create(index="users", body={"username": "李仕凯", "password": "123"}, ignore=400)
     # result = obj.indices.delete(index='users', ignore = [400, 404])
@@ -137,29 +141,32 @@ def upload_file(request):
             print(myFile.name)
             return HttpResponse("no files for upload!")
         #  todo 需要修改地址或者改成全局变量容易修改
-        destination = open(os.path.join("C:\\Users\\22934\\PycharmProjects\\djangodemo\\upload",myFile.name),'wb+')    # C:\Users\22934\PycharmProjects\djangodemo\upload打开特定的文件夹进行二进制的写操作
+        destination = open(os.path.join(settings.uploadDir,myFile.name),'wb+')    # C:\Users\22934\PycharmProjects\djangodemo\upload打开特定的文件夹进行二进制的写操作
+        # destination = open(os.path.join("C:\\Users\\22934\\PycharmProjects\\djangodemo\\upload",myFile.name),'wb+')    # C:\Users\22934\PycharmProjects\djangodemo\upload打开特定的文件夹进行二进制的写操作
         for chunk in myFile.chunks():      # 分块写入文件
             destination.write(chunk)
         # 处理写入的文件，生成待插入数据库文件 todo try-catch的写法问题，捕获全局异常解决失败
         print(destination)
-        traverse.traverse_dir('C:/Users/22934/PycharmProjects/djangodemo/upload')
+
+        traverse.traverse_dir(settings.uploadDir)
+        # traverse.traverse_dir('C:/Users/22934/PycharmProjects/djangodemo/upload')
 
 
         # elasticsearch 调用logstash，或者按行读取发送数据到elasticsearch、哪个简单
 
         # 清空文件内容加载最后删除文件中
 
-
         # 关闭文件
         destination.close()
         deleteAllTheFile()
         return HttpResponse("upload over!")
 def sent_json_to_elasticsearch(request):
-    obj = Elasticsearch('localhost:9200')
+    obj = Elasticsearch(settings.REQUEST_ES_IP_PORT)
     # # 創建索引index:索引的名字,body:數據,ignore:狀態碼
     # result = obj.indices.create(index="users", body={"username": "李仕凯", "password": "123"}, ignore=400)
     # 判断是否存在文件
-    file = open("C:\\Users\\22934\\PycharmProjects\\djangodemo\\processtologstash\\data-end.txt")
+    file = open(settings.data_end_txt)
+    # file = open("C:\\Users\\22934\\PycharmProjects\\djangodemo\\processtologstash\\data-end.txt")
     print('进入发送json数据给elasticsearch')
     while 1:
         line = file.readline()
@@ -177,11 +184,14 @@ def sent_json_to_elasticsearch(request):
     print('读取结束')
     # 清空文件内容
     file.close()
-    shutil.rmtree("C:\\Users\\22934\\PycharmProjects\\djangodemo\\processtologstash")
-    os.mkdir("C:\\Users\\22934\\PycharmProjects\\djangodemo\\processtologstash")
+    shutil.rmtree(settings.processToTogstashDirTest)
+    # shutil.rmtree("C:\\Users\\22934\\PycharmProjects\\djangodemo\\processtologstash")
+
+    os.mkdir(settings.processToTogstashDirTest)
+    # os.mkdir("C:\\Users\\22934\\PycharmProjects\\djangodemo\\processtologstash")
     return HttpResponse("upload over!")
 def processHandleInput(request):
-    obj = Elasticsearch('localhost:9200')
+    obj = Elasticsearch(settings.REQUEST_ES_IP_PORT)
     # todo 处理请求过来的json数据
     # print(request.content_params)
     # print(request.body)
@@ -194,8 +204,10 @@ def deleteAllTheFile():
 
     # 处理完之后删除文件/先上传再清空
     # os.remove("C:\\Users\\22934\\PycharmProjects\\djangodemo\\upload")
-    shutil.rmtree("C:\\Users\\22934\\PycharmProjects\\djangodemo\\upload")
-    os.mkdir("C:\\Users\\22934\\PycharmProjects\\djangodemo\\upload")
+    shutil.rmtree(settings.uploadDir)
+    # shutil.rmtree("C:\\Users\\22934\\PycharmProjects\\djangodemo\\upload")
+    os.mkdir(settings.uploadDir)
+    # os.mkdir("C:\\Users\\22934\\PycharmProjects\\djangodemo\\upload")
     # todo 删除文件夹再新建文件夹的形式
     # shutil.rmtree("C:\\Users\\22934\\PycharmProjects\\djangodemo\\processtologstash")
     # os.mkdir("C:\\Users\\22934\\PycharmProjects\\djangodemo\\processtologstash")
@@ -204,4 +216,17 @@ def deleteAllTheFile():
 
 if __name__ == '__main__':
     # CRUDParamMethod(1)
-    sent_json_to_elasticsearch()
+    # sent_json_to_elasticsearch()
+    print(os.path.abspath(os.curdir))
+    print(os.path.dirname(__file__))
+    print(settings.BASE_DIR)
+    print(settings.XMLFILES_FOLDER)
+    uploadDir = os.path.join(settings.BASE_DIR, '../upload')
+    if os.path.exists(uploadDir):
+        shutil.rmtree(os.path.join(settings.BASE_DIR, '../upload'))
+    else:
+        os.mkdir(uploadDir)
+    processToTogstashDirTest = os.path.join(settings.BASE_DIR, '../processtologstash')
+    data_end_txt = processToTogstashDirTest + '/data-end.txt'
+    # file = open("C:\\Users\\22934\\PycharmProjects\\djangodemo\\processtologstash\\data-end.txt")
+    print(os.path.isfile(data_end_txt))

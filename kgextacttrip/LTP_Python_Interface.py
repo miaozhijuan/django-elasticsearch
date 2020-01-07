@@ -75,6 +75,26 @@ class LTP_MODEL():
         content = json.loads(content)
         print(type(content))
         # print(content['xml4nlp'])
+        testcontent = content['xml4nlp']['doc']['para']
+        segmented_text_list = []
+        for text_other in testcontent:
+            sent = text_other
+            text = []
+            # for word in sent['@cont']:
+            text.append(sent['sent']['@cont'])
+            segmented_text_list.append(text)
+        return segmented_text_list
+
+    def Segmentor(self, input_list, task='ws'):
+        '''
+        功能：实现分词文本的分词
+        返回值：每个文本的形成一个列表[['word1','word2'],['word1','word3'],……]
+        '''
+        input_xml = self.build_xml(input_list)
+        content = self.output_json(task, input_xml)
+        content = json.loads(content)
+        print(type(content))
+        # print(content['xml4nlp'])
         testcontent = content['xml4nlp']['doc']['para']['sent']
         segmented_text_list = []
         for text_other in testcontent['word']:
@@ -95,14 +115,14 @@ class LTP_MODEL():
         content = json.loads(content)
         testcontent = content['xml4nlp']['doc']['para']
         postagger_text_list = []
-        for text_other in testcontent['sent']:
+        for text_other in testcontent:
             sent = text_other
             text = []
-            for word in testcontent['sent']['word']:
-                text.append([word['@cont'], word['@pos']])
+            # for word in testcontent['sent']['word']:
+            text.append([sent['sent']['@cont'], sent['sent']['word']['@pos']])
             postagger_text_list.append(text)
             # 强行break
-            break;
+            # break;
         return postagger_text_list
 
     def NamedEntityRecognizer(self, input_list, task='ner', Entity_dist=False, repead=False):
@@ -229,6 +249,28 @@ class LTP_MODEL():
                 text.append(word)
             syntaxparser_text_list.append(text)
             break;
+        return syntaxparser_text_list
+
+    def Parser(self, input_list, task='dp'):
+        '''
+        # head = parent+1
+        # relation = relate  可以从中间抽取head 和 relation 构成LTP 的标准输出，但是为了根据自己的情况，直接输出返回的全部的信息
+        功能：实现依存句法分析
+        返回值：每个文本的形成一个列表
+        [[{u'relate': u'WP', u'cont': u'\uff0c', u'id': 4, u'parent': 3, u'pos': u'wp'},{u'relate': u'RAD', u'cont': u'\u7684', u'id': 1, u'parent': 0, u'pos': u'u'}],……]
+        '''
+        input_xml = self.build_xml(input_list)
+        content = self.output_json(task, input_xml)
+        content = json.loads(content)
+        testcontent = content['xml4nlp']['doc']['para']
+        syntaxparser_text_list = []
+        for text_other in testcontent:
+            sent = text_other
+            text = []
+            # for word in testcontent['sent']['word']:
+            text.append(sent['sent']['word'])
+            syntaxparser_text_list.append(text)
+            # break;
         return syntaxparser_text_list
 
     def triple_extract(self, sentence):
@@ -402,16 +444,16 @@ class LTP_MODEL():
 if __name__ == '__main__':
     intput_list = ['中国，是以华夏文明为源泉、中华文化为基础，并以汉族为主体民族的多民族国家，通用汉语、汉字，汉族与少数民族被统称为“中华民族”，又自称为炎黄子孙、龙的传人']
     model = LTP_MODEL()
-    input_sentence = "中国，是以华夏文明为源泉、中华文化为基础，并以汉族为主体民族的多民族国家，通用汉语、汉字，汉族与少数民族被统称为“中华民族”，又自称为炎黄子孙、龙的传人"
-    print(model.segment(intput_list))
-    print(model.postagger(intput_list))
-    print(model.NamedEntityRecognizer(intput_list, Entity_dist=True)[0]['place'][0])
-    print(model.NamedEntityRecognizer(intput_list))
-    print(model.SyntaxParser(intput_list))
+    input_sentence = "安全检查时发现：双泉变电站食堂燃气罐老旧，不满足《城镇燃气管理条例》第四章第二十七条：“燃气用户应当遵守安全用气规则，使用合格的燃气燃烧器具和气瓶，及时更换国家明令淘汰或者使用年限已届满的燃气燃烧器具、连接管等，并按照约定期限支付燃气费用”之规定，存在可能因燃气泄露爆炸造成人员伤亡事故隐患"
+    # print(model.segment(intput_list))
+    # print(model.postagger(intput_list))
+    # print(model.NamedEntityRecognizer(intput_list, Entity_dist=True)[0]['place'][0])
+    # print(model.NamedEntityRecognizer(intput_list))
+    # print(model.SyntaxParser(intput_list))
     Subjective_guest, Dynamic_relation, Guest, Name_entity_relation = model.triple_extract(input_sentence)
     for e in Subjective_guest[0]:
         print(e, end=' ')
     print("\n")
     for e in Dynamic_relation[0]:
         print(e, end=' ')
-    print(model.SementicRoleLabeller(intput_list))
+    # print(model.SementicRoleLabeller(intput_list))

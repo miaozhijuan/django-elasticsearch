@@ -9,6 +9,7 @@ import xmltodict
 from urllib import request, parse
 import re
 from xml.dom.minidom import xml
+from djangodemo import settings
 
 from kgextacttrip import TriplesExtraction
 
@@ -20,7 +21,8 @@ from kgextacttrip import TriplesExtraction
 
 
 class LTP_MODEL():
-    def __init__(self, server_url="http://192.168.43.245:8080/ltp"):
+    # def __init__(self, server_url="http://39.106.226.131:8080/ltp"):
+    def __init__(self, server_url=settings.LTP_SERVER_URL):
         # task 任务的具体形式，可以是分词：'ws'，词性标注：'pos',依存语法分析：'dp'，命名实体识别：ner语义角色标注：'srl',或者全部：'all'
         self.server_url = server_url
 
@@ -297,7 +299,7 @@ class LTP_MODEL():
                     e1 = self.complete_e(words, postags, child_dict_list, child_dict['SBV'][0])
                     r = words[index]
                     e2 = self.complete_e(words, postags, child_dict_list, child_dict['VOB'][0])
-                    Subjective_guest.append((e1, r, e2))
+                    Subjective_guest.append([e1, r, e2])
 
                 # 定语后置，动宾关系
                 if arcs[index]['relation'] == 'ATT':
@@ -453,6 +455,7 @@ if __name__ == '__main__':
     intput_list = ['李克强总理今天来我家了,我感到非常荣幸']
     model = LTP_MODEL()
     input_sentence = "唐纳德·特朗普（Donald Trump），1946年6月14日生于纽约，美国共和党籍政治家、企业家、商人，第45任美国总统。1968年从宾夕法尼亚大学沃顿商学院毕业后，进入其父的房地产公司工作，并在1971年开始掌管公司运营，正式进军商界。在随后几十年间，特朗普开始建立自己的房地产王国，人称“地产之王”。除房地产外，特朗普将投资范围延伸到其他行业，包括开设赌场、高尔夫球场等。他还涉足娱乐界，是美国真人秀《名人学徒》等电视节目的主持人，并担任“环球小姐”选美大赛主席。美国杂志《福布斯》曾评估特朗普资产净值约为45亿美元，特朗普则称超过100亿美元。特朗普在过去20年间分别支持过共和党和民主党各主要总统竞选者。2015年6月，特朗普以共和党竞选者身份正式参加2016年美国总统选举。此前，特朗普没有担任过公共职务。特朗普结过3次婚，育有5个子女。 [1]  2016年11月9日，唐纳德·特朗普已获得了276张选举人票，超过270张选举人票的获胜标准，当选美国第45任总统。 [2]  2017年1月20日，特朗普正式成为美国第45任总统。2018年8月7日，西好莱坞市市议会投票通过“特朗普之星”将永久移除"
+    print(input_sentence)
     model.extractTripleGroups(input_sentence)
     # sentences = model.split_sents(input_sentence)
     # svos = []

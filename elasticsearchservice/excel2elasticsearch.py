@@ -1,6 +1,7 @@
 
 import xlrd
 import json
+from djangodemo import settings
 
 
 
@@ -13,7 +14,8 @@ def writ_from_dirct(filepath):
         print(sheetNames)
 
         # 生成写入文件设置 上一个文件是data22.txt
-        with open('processtologstash/data-end.txt','a') as f:    #设置文件对象
+        # with open('processtologstash/data-end.txt','a') as f:    #设置文件对象
+        with open(settings.data_end_txt,'a') as f:    #设置文件对象
             # 遍历写入文件
             for name in sheetNames:
                     if (name.__eq__("基础数据")):

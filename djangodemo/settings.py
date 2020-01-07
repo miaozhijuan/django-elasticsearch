@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -25,58 +24,63 @@ SECRET_KEY = '$ks08o=el6wzt6*hhtbg8e7_6pu)zs9po=wqtu4+!9r4-46euw'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    # 'django.middleware.security.SecurityMiddleware',
+    # 'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
+    # 'corsheaders.middleware.CorsPostCsrfMiddleware',
+    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # 'django.contrib.messages.middleware.MessageMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 # Application definition
 
 INSTALLED_APPS = [
     'corsheaders',
-    'django.contrib.admin',
-    'django.contrib.auth',
+    # 'django.contrib.admin',
+    # 'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users',
+    # 'users',
     'kgextacttrip',
     'elasticsearchservice',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = (
-      # 'http://localhost:8888',
-)
+# CORS_ORIGIN_WHITELIST = (
+#       # 'http://localhost:8888',
+# )
 
 CORS_ALLOW_METHODS = (
-'GET',
-'POST',
-'PUT',
-'PATCH',
-'DELETE',
-'OPTIONS'
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS'
 )
 
 CORS_ALLOW_HEADERS = (
-'x-requested-with',
-'content-type',
-'accept',
-'origin',
-'authorization',
-'x-csrftoken',
-'access-control-allow-origin',
-'access-control-allow-headers'
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'x-requested-with',
+    'access-control-allow-origin',
+    'access-control-allow-headers'
 )
 
 ROOT_URLCONF = 'djangodemo.urls'
@@ -97,8 +101,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'djangodemo.wsgi.application'
-
+# WSGI_APPLICATION = 'django.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -109,7 +112,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -129,7 +131,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -143,11 +144,19 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
 
-# todo 全局变量导入
-
+# 全局变量导入 包括服务器ip 文件上传路径绝对转相对
+# REQUEST_ES_RUL = 'http://127.0.0.1:9200/lishikai_index007/_search'
+REQUEST_ES_RUL = 'http://39.106.226.131:9200/lishikai_index007/_search'
+# REQUEST_ES_IP_PORT = 'localhost:9200'
+REQUEST_ES_IP_PORT = '39.106.226.131:9200'
+LTP_SERVER_URL = 'http://39.106.226.131:8080/ltp'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+XMLFILES_FOLDER = os.path.join(BASE_DIR, 'xml_files')
+processToTogstashDirTest = os.path.join(BASE_DIR, '../processtologstash')
+uploadDir = os.path.join(BASE_DIR, '../upload')
+data_end_txt = processToTogstashDirTest + '/data-end.txt'
