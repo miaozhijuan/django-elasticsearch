@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     # 'users',
     'kgextacttrip',
     'elasticsearchservice',
+    'echartsGraph',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True

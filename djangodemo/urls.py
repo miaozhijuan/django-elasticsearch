@@ -17,6 +17,7 @@ Including another URLconf
 from django.urls import path
 from elasticsearchservice import views
 from kgextacttrip import kgviews
+from echartsGraph import echartsViews
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
