@@ -4,7 +4,7 @@ from elasticsearchservice import excel2elasticsearch
 
 
 def traverse_dir(path):
-     path = 'D:\隐患库'  #文件夹目录
+     # path = 'C:/Users/22934/Desktop/隐患库'  #文件夹目录
      files= os.listdir(path) #得到文件夹下的所有文件名称
      s = []
      for file in files: #遍历文件夹

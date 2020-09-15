@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
+# @Date    : 2017-07-28 11:25:02
+# @Author  : 周奇 (2590193099@qq.com)
+# @Link    : ……
 import json
 import urllib
 import xmltodict

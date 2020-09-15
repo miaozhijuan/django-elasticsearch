@@ -77,9 +77,6 @@ def writ_from_dirct(filepath):
                     for i in range(3, 15):      # 防控措施是15 事故隐患内容是5
                             key1 = sheet.cell(i, 1).value.strip()
                             value1 = sheet.cell(i, 2).value.strip()
-                            print("=====5========")
-                            print(key1)
-                            print("=============")
                             # key1.replace("\n", "")
                             # key1.replace("\r", "").replace("\n", "")
                             # key1 = [x.strip() for x in key1]
@@ -99,9 +96,6 @@ def writ_from_dirct(filepath):
                     for i in range(16, 18):
                             key1 = sheet.cell(i, 1).value.strip()
                             value1 = sheet.cell(i, 2).value.strip()
-                            print("=====4========")
-                            print(key1)
-                            print("=============")
                             if key1 == "" or value1 == "":
                                 continue;
                             json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
@@ -109,9 +103,6 @@ def writ_from_dirct(filepath):
                     for i in range(20, 22):
                             key1 = sheet.cell(i, 1).value.strip().strip()
                             value1 = sheet.cell(i, 2).value.strip()
-                            print("=====3========")
-                            print(key1)
-                            print("=============")
                             if key1 == "" or value1 == "":
                                 continue;
                             json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
@@ -119,9 +110,6 @@ def writ_from_dirct(filepath):
                     for i in range(3, 11):
                             key1 = sheet.cell(i, 3).value.strip()
                             value1 = sheet.cell(i, 4).value.strip()
-                            print("=====2========")
-                            print(key1)
-                            print("=============")
                             if key1 == "" or value1 == "":
                                 continue;
                             json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
@@ -129,9 +117,6 @@ def writ_from_dirct(filepath):
                     for i in range(3, 11):
                             key1 = sheet.cell(i, 5).value.strip()
                             value1 = sheet.cell(i, 6).value.strip()
-                            print("=====1========")
-                            print(key1)
-                            print("=============")
                             if key1 == "" or value1 == "":
                                 continue;
                             json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","

@@ -64,7 +64,6 @@ def CRUDParamMethod(request):
     }
 
     result = obj.search(index='users', body=dsl)
-
     print(result)
     # 修改用户信息--例如密码  --传入id
     data = {
@@ -196,10 +195,9 @@ def processHandleInput(request):
     # todo 处理请求过来的json数据
     # print(request.content_params)
     # print(request.body)
-    print(request.body)
     json_result = json.loads(request.body)
     print(json_result)
-    result = obj.index(index='users', doc_type='_doc', body=json_result, ignore=400)
+    result = obj.index(index='lishikai_index000', doc_type='_doc', body=json_result, ignore=400)
     print(result)
     return HttpResponse('handle over!')
 def deleteAllTheFile():

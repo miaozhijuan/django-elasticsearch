@@ -1,14 +1,13 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
+# @Date    : 2017-07-28 11:25:02
+# @Author  : 周奇 (2590193099@qq.com)
+# @Link    : ……
 import json
 import urllib
 import xmltodict
 from urllib import request, parse
-import re
 from xml.dom.minidom import xml
-from djangodemo import settings
-
-from kgextacttrip import TriplesExtraction
 
 '''
 参考LTP：http://ltp.readthedocs.io/zh_CN/latest/ltpserver.html
@@ -18,8 +17,7 @@ from kgextacttrip import TriplesExtraction
 
 
 class LTP_MODEL():
-    # def __init__(self, server_url="http://39.106.226.131:8080/ltp"):
-    def __init__(self, server_url=settings.LTP_SERVER_URL):
+    def __init__(self, server_url="http://192.168.43.245:8080/ltp"):
         # task 任务的具体形式，可以是分词：'ws'，词性标注：'pos',依存语法分析：'dp'，命名实体识别：ner语义角色标注：'srl',或者全部：'all'
         self.server_url = server_url
 
@@ -77,6 +75,26 @@ class LTP_MODEL():
         content = json.loads(content)
         print(type(content))
         # print(content['xml4nlp'])
+        testcontent = content['xml4nlp']['doc']['para']
+        segmented_text_list = []
+        for text_other in testcontent:
+            sent = text_other
+            text = []
+            # for word in sent['@cont']:
+            text.append(sent['sent']['@cont'])
+            segmented_text_list.append(text)
+        return segmented_text_list
+
+    def Segmentor(self, input_list, task='ws'):
+        '''
+        功能：实现分词文本的分词
+        返回值：每个文本的形成一个列表[['word1','word2'],['word1','word3'],……]
+        '''
+        input_xml = self.build_xml(input_list)
+        content = self.output_json(task, input_xml)
+        content = json.loads(content)
+        print(type(content))
+        # print(content['xml4nlp'])
         testcontent = content['xml4nlp']['doc']['para']['sent']
         segmented_text_list = []
         for text_other in testcontent['word']:
@@ -97,14 +115,14 @@ class LTP_MODEL():
         content = json.loads(content)
         testcontent = content['xml4nlp']['doc']['para']
         postagger_text_list = []
-        for text_other in testcontent['sent']:
+        for text_other in testcontent:
             sent = text_other
             text = []
-            for word in testcontent['sent']['word']:
-                text.append([word['@cont'], word['@pos']])
+            # for word in testcontent['sent']['word']:
+            text.append([sent['sent']['@cont'], sent['sent']['word']['@pos']])
             postagger_text_list.append(text)
             # 强行break
-            break;
+            # break;
         return postagger_text_list
 
     def NamedEntityRecognizer(self, input_list, task='ner', Entity_dist=False, repead=False):
@@ -210,31 +228,6 @@ class LTP_MODEL():
             name_entity_dist['organization'] = organization_entity_list
             name_entity_dist['place'] = place_entity_list
         return name_entity_dist
-    def Parse(self, sentence, task='dp'):
-        arcs = []
-        syntaxparser_text_list = self.SyntaxParser2([sentence])
-        for words_property_list1 in syntaxparser_text_list:
-            # for words_property_list in words_property_list1:
-            arcs.append(
-                 {'head': int(words_property_list1['@parent']) + 1, 'relation': words_property_list1['@relate']})
-        return arcs
-    def SyntaxParser2(self, input_list, task='dp'):
-        '''
-        # head = parent+1
-        # relation = relate  可以从中间抽取head 和 relation 构成LTP 的标准输出，但是为了根据自己的情况，直接输出返回的全部的信息
-        功能：实现依存句法分析
-        返回值：每个文本的形成一个列表
-        [[{u'relate': u'WP', u'cont': u'\uff0c', u'id': 4, u'parent': 3, u'pos': u'wp'},{u'relate': u'RAD', u'cont': u'\u7684', u'id': 1, u'parent': 0, u'pos': u'u'}],……]
-        '''
-        input_xml = self.build_xml(input_list)
-        content = self.output_json(task, input_xml)
-        content = json.loads(content)
-        testcontent = content['xml4nlp']['doc']['para']['sent']['word']
-        syntaxparser_text_list = []
-        for text_other in testcontent:
-            sent = text_other
-            syntaxparser_text_list.append(sent)
-        return syntaxparser_text_list
 
     def SyntaxParser(self, input_list, task='dp'):
         '''
@@ -257,6 +250,29 @@ class LTP_MODEL():
             syntaxparser_text_list.append(text)
             break;
         return syntaxparser_text_list
+
+    def Parser(self, input_list, task='dp'):
+        '''
+        # head = parent+1
+        # relation = relate  可以从中间抽取head 和 relation 构成LTP 的标准输出，但是为了根据自己的情况，直接输出返回的全部的信息
+        功能：实现依存句法分析
+        返回值：每个文本的形成一个列表
+        [[{u'relate': u'WP', u'cont': u'\uff0c', u'id': 4, u'parent': 3, u'pos': u'wp'},{u'relate': u'RAD', u'cont': u'\u7684', u'id': 1, u'parent': 0, u'pos': u'u'}],……]
+        '''
+        input_xml = self.build_xml(input_list)
+        content = self.output_json(task, input_xml)
+        content = json.loads(content)
+        testcontent = content['xml4nlp']['doc']['para']
+        syntaxparser_text_list = []
+        for text_other in testcontent:
+            sent = text_other
+            text = []
+            # for word in testcontent['sent']['word']:
+            text.append(sent['sent']['word'])
+            syntaxparser_text_list.append(text)
+            # break;
+        return syntaxparser_text_list
+
     def triple_extract(self, sentence):
         '''
         功能: 对于给定的句子进行事实三元组抽取
@@ -296,12 +312,7 @@ class LTP_MODEL():
                     e1 = self.complete_e(words, postags, child_dict_list, child_dict['SBV'][0])
                     r = words[index]
                     e2 = self.complete_e(words, postags, child_dict_list, child_dict['VOB'][0])
-                    sublist = {}
-                    sublist['subject'] = e1
-                    sublist['verb']=r
-                    sublist['object']=e2
-                    Subjective_guest.append(sublist)
-
+                    Subjective_guest.append((e1, r, e2))
 
                 # 定语后置，动宾关系
                 if arcs[index]['relation'] == 'ATT':
@@ -418,12 +429,9 @@ class LTP_MODEL():
             text = []
             for word in content['xml4nlp']['doc']['para']['sent']['word']:
                 if 'arg' in word:
-                    if type(word['arg']).__name__ == 'dict':
-                        text.append([{'index': word['@id'], 'name': word['@cont'], 'arg': [word['arg']]}])
-                    else:
-                        text.append([{'index':word['@id'],'name':word['@cont'], 'arg':word['arg']}])
+                # if word['arg'] != []:
+                    text.append([word['@cont'], word['arg']])
             rolelabeller_text_list.append(text)
-            break;# 这里的arg就是rolelabeller[1],配置的关系信息，role..[0]是对应谓语段
         return rolelabeller_text_list
     def xmltojson(xmlstr, xmlstr1):
         #parse是的xml解析器
@@ -432,51 +440,20 @@ class LTP_MODEL():
         #dumps()方法的ident=1，格式化json
         jsonstr = json.dumps(xmlparse,indent=1)
         print(jsonstr)
-    def split_sents(self, content):
-        return [sentence for sentence in re.split(r'[？?！!。；;：:\n\r]', content) if sentence]
-
-    def extractTripleGroups(self,input_sentence):
-        sentences = self.split_sents(input_sentence)
-        svos = []
-        for sentence in sentences:
-            # print(model.segment(intput_list))
-            # print(model.postagger(intput_list))
-            # # print(model.NamedEntityRecognizer(intput_list, Entity_dist=True)[0]['place'][0])
-            # print(model.NamedEntityRecognizer(intput_list))
-            # print(model.SyntaxParser(intput_list))
-            Subjective_guest, Dynamic_relation, Guest, Name_entity_relation = self.triple_extract(sentence)
-            # for e in Subjective_guest[0]:
-            #     print(e, end=' ')
-            # print("\n")
-            if Subjective_guest.__len__() > 0:
-                svos += Subjective_guest
-        print('svos', svos)
-        return svos
 
 if __name__ == '__main__':
-    intput_list = ['李克强总理今天来我家了,我感到非常荣幸']
+    intput_list = ['中国，是以华夏文明为源泉、中华文化为基础，并以汉族为主体民族的多民族国家，通用汉语、汉字，汉族与少数民族被统称为“中华民族”，又自称为炎黄子孙、龙的传人']
     model = LTP_MODEL()
-    input_sentence = "唐纳德·特朗普（Donald Trump），1946年6月14日生于纽约，美国共和党籍政治家、企业家、商人，第45任美国总统。1968年从宾夕法尼亚大学沃顿商学院毕业后，进入其父的房地产公司工作，并在1971年开始掌管公司运营，正式进军商界。在随后几十年间，特朗普开始建立自己的房地产王国，人称“地产之王”。除房地产外，特朗普将投资范围延伸到其他行业，包括开设赌场、高尔夫球场等。他还涉足娱乐界，是美国真人秀《名人学徒》等电视节目的主持人，并担任“环球小姐”选美大赛主席。美国杂志《福布斯》曾评估特朗普资产净值约为45亿美元，特朗普则称超过100亿美元。特朗普在过去20年间分别支持过共和党和民主党各主要总统竞选者。2015年6月，特朗普以共和党竞选者身份正式参加2016年美国总统选举。此前，特朗普没有担任过公共职务。特朗普结过3次婚，育有5个子女。 [1]  2016年11月9日，唐纳德·特朗普已获得了276张选举人票，超过270张选举人票的获胜标准，当选美国第45任总统。 [2]  2017年1月20日，特朗普正式成为美国第45任总统。2018年8月7日，西好莱坞市市议会投票通过“特朗普之星”将永久移除"
-    print(input_sentence)
-    svos1 = model.extractTripleGroups(input_sentence)
-    print(json.dumps(svos1,ensure_ascii=False))
-    jsonstring = json.dumps(svos1,ensure_ascii=False)
-    print(jsonstring)
-    # sentences = model.split_sents(input_sentence)
-    # svos = []
-    # for sentence in sentences:
-    # # print(model.segment(intput_list))
-    # # print(model.postagger(intput_list))
-    # # # print(model.NamedEntityRecognizer(intput_list, Entity_dist=True)[0]['place'][0])
-    # # print(model.NamedEntityRecognizer(intput_list))
-    # # print(model.SyntaxParser(intput_list))
-    #     Subjective_guest, Dynamic_relation, Guest, Name_entity_relation = model.triple_extract(sentence)
-    #     # for e in Subjective_guest[0]:
-    #     #     print(e, end=' ')
-    #     # print("\n")
-    #     if Subjective_guest.__len__()>0:
-    #         svos += Subjective_guest
-    # print('svos', svos)
-    # for e in Dynamic_relation[0]:
-    #     print(e, end=' ')
+    input_sentence = "安全检查时发现：双泉变电站食堂燃气罐老旧，不满足《城镇燃气管理条例》第四章第二十七条：“燃气用户应当遵守安全用气规则，使用合格的燃气燃烧器具和气瓶，及时更换国家明令淘汰或者使用年限已届满的燃气燃烧器具、连接管等，并按照约定期限支付燃气费用”之规定，存在可能因燃气泄露爆炸造成人员伤亡事故隐患"
+    # print(model.segment(intput_list))
+    # print(model.postagger(intput_list))
+    # print(model.NamedEntityRecognizer(intput_list, Entity_dist=True)[0]['place'][0])
+    # print(model.NamedEntityRecognizer(intput_list))
+    # print(model.SyntaxParser(intput_list))
+    Subjective_guest, Dynamic_relation, Guest, Name_entity_relation = model.triple_extract(input_sentence)
+    for e in Subjective_guest[0]:
+        print(e, end=' ')
+    print("\n")
+    for e in Dynamic_relation[0]:
+        print(e, end=' ')
     # print(model.SementicRoleLabeller(intput_list))
