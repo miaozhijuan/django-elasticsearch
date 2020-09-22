@@ -153,7 +153,7 @@ STATIC_URL = '/static/'
 
 # 全局变量导入 包括服务器ip 文件上传路径绝对转相对
 # REQUEST_ES_RUL = 'http://127.0.0.1:9200/lishikai_index007/_search'
-REQUEST_ES_RUL = 'http://39.106.226.131:9200/lishikai_index007/_search'
+REQUEST_ES_RUL = 'http://39.106.226.131:9200/lishikai_index000/_search'
 # REQUEST_ES_IP_PORT = 'localhost:9200'
 REQUEST_ES_IP_PORT = '39.106.226.131:9200'
 LTP_SERVER_URL = 'http://39.106.226.131:8080/ltp'

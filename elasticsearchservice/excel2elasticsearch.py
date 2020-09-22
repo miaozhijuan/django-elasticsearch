@@ -137,6 +137,9 @@ def writ_from_dirct(filepath):
                             json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
 
 
+                    # 隐患
+
+
                     key1 = sheet.cell(3,8).value.strip()
                     value1 = sheet.cell(3,9).value.strip()
                     json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\"}\n"

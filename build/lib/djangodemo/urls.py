@@ -16,6 +16,7 @@ Including another URLconf
 # from django.contrib import admin
 from django.urls import path
 from elasticsearchservice import views
+from echartsGraph import echartsViews
 from kgextacttrip import kgviews
 from echartsGraph import echartsViews
 from userManager import userManagerViews
@@ -24,9 +25,12 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     path('index/', views.index),
     path('statisticForEcharts/', views.statisticForEcharts),
+    path('statisticForIfZLcomplete/', echartsViews.statisticForIfZLcomplete),
+    path('hiddenHistoricalTrend/', echartsViews.hiddenHistoricalTrend),
     path('upload_file/', views.upload_file),
     path('sent_json_to_elasticsearch/', views.sent_json_to_elasticsearch),
     path('processHandleInput/', views.processHandleInput),
     path('kgprocess/', kgviews.kgprocess),
     path('user_add/', userManagerViews.requestUserAdd),
+
 ]
