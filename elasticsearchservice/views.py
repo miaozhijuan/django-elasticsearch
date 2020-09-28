@@ -27,34 +27,22 @@ def index(request):
     }
   }
 }
-#为什么使用post请求的方式才能成功？因为post请求可以传输json值
+
     headers ={'content-type': 'application/json'}
     url = settings.REQUEST_ES_RUL
     # ret = requests.post("http://127.0.0.1:9200/lishikai_index007/_search",data=json.dumps(payload),headers=headers)
     ret = requests.post(url,data=json.dumps(payload),headers=headers)
-    print('----------------')
-    print(ret.text)
-    print('----------------')
     # reqparam = request.body.decode('utf-8')  json解析完成
     reqparam =simplejson.loads(request.body.decode('utf-8'))
-    print(reqparam['query']['match']['发现人'])  #请求解析成功实现-------下一步进行前端后台整个流程的书写
+    print(reqparam['query']['match']['发现人'])  #
     return HttpResponse(ret.text)
 
-# 修改----只提供对于规章制度、 python包操作elasticsearch
+# 修改
 def CRUDParamMethod(request):
     print(request)
     ipPort = settings.REQUEST_ES_IP_PORT
     obj = Elasticsearch(ipPort)
-    # # 創建索引index:索引的名字,body:數據,ignore:狀態碼
-    # result = obj.indices.create(index="users", body={"username": "李仕凯", "password": "123"}, ignore=400)
-    # result = obj.indices.delete(index='users', ignore = [400, 404])
-    # data = {"username": "李仕凯", "password": "123"}
-    # data2 = {"username": "李人", "password": "123"}
-    # # result = obj.create(index="users", doc_type="doc_", id=1, body=data)
-    # # 创建用户user索引
-    # result = obj.index(index='users', doc_type='_doc', body=data)
-    # result = obj.index(index='users', doc_type='_doc', body=data2)
-    # 检索数据
+
     dsl = {
         'query': {
             'match_phrase': {
@@ -65,8 +53,6 @@ def CRUDParamMethod(request):
 
     result = obj.search(index='users', body=dsl)
 
-    print(result)
-    # 修改用户信息--例如密码  --传入id
     data = {
         'username': '美国留给伊拉克的是个烂摊子吗',
         'password': '123',
@@ -76,8 +62,6 @@ def CRUDParamMethod(request):
             '_source': data,        # 实现更新操作-------更新用户名或者密码
             '_op_type': 'index'}
     result = bulk(obj, actions=[data1])
-    # bulk()
-    # 删除操作---完成
     result = obj.delete(index='users', doc_type='_doc', id='xaJSHG8B0WQk4EfReCWF')
     # result = obj.update(index='users', doc_type='_doc', id='xaJSHG8B0WQk4EfReCWF', body=json.dumps(data))
     print(result)
@@ -91,16 +75,6 @@ def CRUDParamMethod(request):
 def statisticForEcharts(request):
     print(request)
     obj = Elasticsearch(settings.REQUEST_ES_IP_PORT)
-    # # 創建索引index:索引的名字,body:數據,ignore:狀態碼
-    # result = obj.indices.create(index="users", body={"username": "李仕凯", "password": "123"}, ignore=400)
-    # result = obj.indices.delete(index='users', ignore = [400, 404])
-    # data = {"username": "李仕凯", "password": "123"}
-    # data2 = {"username": "李人", "password": "123"}
-    # # result = obj.create(index="users", doc_type="doc_", id=1, body=data)
-    # # 创建用户user索引
-    # result = obj.index(index='users', doc_type='_doc', body=data)
-    # result = obj.index(index='users', doc_type='_doc', body=data2)
-    # 检索数据
     dsl = {
             "size" : 0,
             "aggs" : {
@@ -113,21 +87,6 @@ def statisticForEcharts(request):
         }
 
     result = obj.search(index='lishikai_index000', body=dsl)
-    # print(result)
-    # 修改用户信息--例如密码  --传入id
-    # data = {
-    #     'username': '美国留给伊拉克的是个烂摊子吗',
-    #     'password': '123',
-    # }
-    # data1 = {'_index': 'users',
-    #         '_id': 'xaJSHG8B0WQk4EfReCWF',
-    #         '_source': data,        # 实现更新操作-------更新用户名或者密码
-    #         '_op_type': 'index'}
-    # result = bulk(obj, actions=[data1])
-    # # bulk()
-    # # 删除操作---完成
-    # result = obj.delete(index='users', doc_type='_doc', id='xaJSHG8B0WQk4EfReCWF')
-    # result = obj.update(index='users', doc_type='_doc', id='xaJSHG8B0WQk4EfReCWF', body=json.dumps(data))
     returnJson = result['aggregations']['popular_colors']['buckets']
     print(returnJson)
     return HttpResponse(json.dumps(returnJson), content_type="application/json")
@@ -146,13 +105,10 @@ def upload_file(request):
         # destination = open(os.path.join("C:\\Users\\22934\\PycharmProjects\\djangodemo\\upload",myFile.name),'wb+')    # C:\Users\22934\PycharmProjects\djangodemo\upload打开特定的文件夹进行二进制的写操作
         for chunk in myFile.chunks():      # 分块写入文件
             destination.write(chunk)
-        # 处理写入的文件，生成待插入数据库文件 todo try-catch的写法问题，捕获全局异常解决失败
         print(destination)
 
         traverse.traverse_dir(settings.uploadDir)
         # traverse.traverse_dir('C:/Users/22934/PycharmProjects/djangodemo/upload')
-
-
         # elasticsearch 调用logstash，或者按行读取发送数据到elasticsearch、哪个简单
 
         # 清空文件内容加载最后删除文件中
