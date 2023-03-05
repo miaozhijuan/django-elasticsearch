@@ -15,7 +15,7 @@ def writ_from_dirct(filepath):
 
         # 生成写入文件设置 上一个文件是data22.txt
         # with open('processtologstash/data-end.txt','a') as f:    #设置文件对象
-        with open(settings.data_end_txt,'a') as f:    #设置文件对象
+        with open('processtologstash/data-end.txt','a',encoding='utf-8') as f:    #设置文件对象
             # 遍历写入文件
             for name in sheetNames:
                     if (name.__eq__("基础数据")):
@@ -77,9 +77,6 @@ def writ_from_dirct(filepath):
                     for i in range(3, 15):      # 防控措施是15 事故隐患内容是5
                             key1 = sheet.cell(i, 1).value.strip()
                             value1 = sheet.cell(i, 2).value.strip()
-                            print("=====5========")
-                            print(key1)
-                            print("=============")
                             # key1.replace("\n", "")
                             # key1.replace("\r", "").replace("\n", "")
                             # key1 = [x.strip() for x in key1]
@@ -99,9 +96,6 @@ def writ_from_dirct(filepath):
                     for i in range(16, 18):
                             key1 = sheet.cell(i, 1).value.strip()
                             value1 = sheet.cell(i, 2).value.strip()
-                            print("=====4========")
-                            print(key1)
-                            print("=============")
                             if key1 == "" or value1 == "":
                                 continue;
                             json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
@@ -109,9 +103,6 @@ def writ_from_dirct(filepath):
                     for i in range(20, 22):
                             key1 = sheet.cell(i, 1).value.strip().strip()
                             value1 = sheet.cell(i, 2).value.strip()
-                            print("=====3========")
-                            print(key1)
-                            print("=============")
                             if key1 == "" or value1 == "":
                                 continue;
                             json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
@@ -119,9 +110,6 @@ def writ_from_dirct(filepath):
                     for i in range(3, 11):
                             key1 = sheet.cell(i, 3).value.strip()
                             value1 = sheet.cell(i, 4).value.strip()
-                            print("=====2========")
-                            print(key1)
-                            print("=============")
                             if key1 == "" or value1 == "":
                                 continue;
                             json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
@@ -129,24 +117,79 @@ def writ_from_dirct(filepath):
                     for i in range(3, 11):
                             key1 = sheet.cell(i, 5).value.strip()
                             value1 = sheet.cell(i, 6).value.strip()
-                            print("=====1========")
-                            print(key1)
-                            print("=============")
                             if key1 == "" or value1 == "":
                                 continue;
                             json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
 
 
-                    # 隐患
-
-
                     key1 = sheet.cell(3,8).value.strip()
                     value1 = sheet.cell(3,9).value.strip()
-                    json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\"}\n"
+                    json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
                     # json_str = '"' + key1 + '"' + ':' + '"' + value1 + '"'
+
+                    # 治理责任人 sheet.cell(11,4)
+                    key1 = sheet.cell(11, 4).value.strip()
+                    value1 = sheet.cell(11, 5).value.strip()
+                    json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
+
+
+                    # 治理期限
+
+
+                    # 治理方案
+
+
+
+                    # 治理完成情况 sheet.cell(15,1) sheet.cell(15,2)
+
+                    key1 = sheet.cell(15,1).value.strip()
+                    value1 = sheet.cell(15,2).value.strip()
+                    key1 = key1.replace('\n', '').replace('\r', '')
+                    value1 = value1.replace('\n', '').replace('\r', '')
+                    json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
+
+                    # 隐患治理计划资金(万元) sheet.cell(16,1)  sheet.cell(16,3)
+                    key1 = sheet.cell(16, 1).value.strip()
+                    value1 = sheet.cell(16, 2).value.strip()
+                    json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
+                    # 累计落实治理资金(万元) sheet.cell(16,5)  sheet.cell(16,8)
+                    key1 = sheet.cell(16, 5).value.strip()
+                    value1 = sheet.cell(16, 8).value.strip()
+                    json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
+                    # 负责人 sheet.cell(17,3) sheet.cell(17,4)
+                    key1 = sheet.cell(17, 3).value.strip()
+                    value1 = sheet.cell(17, 4).value.strip()
+                    json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
+                    # 签字日期  sheet.cell(17,5)  sheet.cell(17,6)
+                    key1 = sheet.cell(17, 5).value.strip()
+                    value1 = sheet.cell(17, 6).value.strip()
+                    json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
+
+                    # 验收组织单位 sheet.cell(18,1) sheet.cell(18,2)
+                    key1 = sheet.cell(18, 1).value.strip()
+                    value1 = sheet.cell(18, 2).value.strip()
+                    json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
+
+
+                    # 验收意见 sheet.cell(19,1) sheet.cell(19,2)
+                    key1 = sheet.cell(19, 1).value.strip()
+                    value1 = sheet.cell(19, 2).value.strip()
+                    json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
+
+                    # 验收日期sheet.cell(21, 5)  sheet.cell(21, 6)
+                    key1 = sheet.cell(21, 5).value.strip()
+                    value1 = sheet.cell(21, 6).value.strip()
+                    json_str = json_str + '"' + key1 + '"' + ':' + "\"" + value1 + "\","
+                    # 是否消除
+                    sfxc = sheet.cell(20, 5).value.strip()
+                    sfxcinput = sheet.cell(20, 6).value.strip()
+                    json_str = json_str + '"' + sfxc + '"' + ':' + "\"" + sfxcinput + "\"}\n"
+
+
+
                     # print(json_str)
                     f.write(json_str)
                     print(json_str)
 
 if __name__ == '__main__':
-    writ_from_dirct("C:/Users/22934/Desktop/隐患库/配电.xls")
+    writ_from_dirct("D:/隐患库/配电.xls")

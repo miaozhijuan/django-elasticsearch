@@ -4,7 +4,7 @@ from django.shortcuts import HttpResponse
 import requests
 import json
 import simplejson
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, TransportError
 import os
 import shutil
 from elasticsearchservice import traverse
@@ -122,15 +122,23 @@ def sent_json_to_elasticsearch(request):
     # # 創建索引index:索引的名字,body:數據,ignore:狀態碼
     # result = obj.indices.create(index="users", body={"username": "李仕凯", "password": "123"}, ignore=400)
     # 判断是否存在文件
-    file = open(settings.data_end_txt)
+    file = open("processtologstash/data-end.txt","r+",encoding="utf-8")
     # file = open("C:\\Users\\22934\\PycharmProjects\\djangodemo\\processtologstash\\data-end.txt")
     print('进入发送json数据给elasticsearch')
-    while 1:
-        line = file.readline()
+    # try:
+    # while 1:
+    line = file.readline()
+
+    while line:
         if not line:
-            break
+            continue
         result = obj.index(index='lishikai_index000', doc_type='_doc', body=line,ignore=400)
         print(result)
+        # print(line, end = '')　      # 在 Python 3 中使用
+        line = file.readline()
+
+    # except TransportError as e:
+    #     print(e.info)
     # while 1:
     #     lines = file.readlines(10)
     #     if not lines:

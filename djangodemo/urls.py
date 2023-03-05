@@ -35,4 +35,8 @@ urlpatterns = [
     path('processHandleInput/', views.processHandleInput),
     path('kgprocess/', kgviews.kgprocess),
     path('user_add/', userManagerViews.requestUserAdd),
+    path('user_delete/', userManagerViews.requestUserDelete),
+    path('user_update/', userManagerViews.requestUserUpdate),
+    path('user_all/', userManagerViews.requestUserAll),
+    path('user_check/', userManagerViews.requestUserCheck),
 ]

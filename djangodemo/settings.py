@@ -153,10 +153,10 @@ STATIC_URL = '/static/'
 
 # 全局变量导入 包括服务器ip 文件上传路径绝对转相对
 # REQUEST_ES_RUL = 'http://127.0.0.1:9200/lishikai_index007/_search'
-REQUEST_ES_RUL = 'http://39.106.226.131:9200/lishikai_index000/_search'
+REQUEST_ES_RUL = 'http://baota.memlee.top:9001/lishikai_index000/_search'
 # REQUEST_ES_IP_PORT = 'localhost:9200'
-REQUEST_ES_IP_PORT = '39.106.226.131:9200'
-LTP_SERVER_URL = 'http://39.106.226.131:8080/ltp'
+REQUEST_ES_IP_PORT = 'baota.memlee.top:9001'
+LTP_SERVER_URL = 'http://baota.memlee.top:8080/ltp'
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 XMLFILES_FOLDER = os.path.join(BASE_DIR, 'xml_files')
 processToTogstashDirTest = os.path.join(BASE_DIR, '../processtologstash')
